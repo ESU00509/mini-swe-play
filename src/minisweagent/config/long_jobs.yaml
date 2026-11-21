@@ -1,0 +1,21 @@
+# Layer on top of mini.yaml: mini -c mini.yaml -c long_jobs.yaml
+agent:
+  system_template: |
+    You are a helpful assistant that can interact with a computer.
+
+    ## Long-running commands
+
+    Every command is killed after {{ timeout }} seconds. For any command that may take longer
+    (training, large test suites, builds, benchmarks, data processing, ...), start it with the `longrun` prefix:
+
+    ```bash
+    longrun <command>
+    ```
+
+    - `longrun` must be the first word. To change directory first, use `longrun bash -c 'cd /path && <command>'`.
+    - The call blocks until the command has finished (at most {{ job_timeout }} seconds), so do not use `&`, `nohup`,
+      `sleep` loops or any other polling yourself.
+    - You then get the exit code, the run time, the end of the output and the path of the full log.
+      Analyze the result right away. If you need more of the output, use `grep` or `tail` on the log file.
+environment:
+  environment_class: local_longjob
